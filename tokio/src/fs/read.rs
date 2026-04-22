@@ -1,7 +1,5 @@
 use crate::fs::asyncify;
-
 use std::{io, path::Path};
-
 /// Reads the entire contents of a file into a bytes vector.
 ///
 /// This is an async version of [`std::fs::read`].
@@ -54,27 +52,5 @@ use std::{io, path::Path};
 /// }
 /// ```
 pub async fn read(path: impl AsRef<Path>) -> io::Result<Vec<u8>> {
-    let path = path.as_ref().to_owned();
-
-    #[cfg(all(
-        tokio_unstable,
-        feature = "io-uring",
-        feature = "rt",
-        feature = "fs",
-        target_os = "linux"
-    ))]
-    {
-        use crate::fs::read_uring;
-
-        let handle = crate::runtime::Handle::current();
-        let driver_handle = handle.inner.driver().io();
-        if driver_handle
-            .check_and_init(io_uring::opcode::Read::CODE)
-            .await?
-        {
-            return read_uring(&path).await;
-        }
-    }
-
-    asyncify(move || std::fs::read(path)).await
+    panic!("STUB: not implemented");
 }
